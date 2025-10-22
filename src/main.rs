@@ -5,6 +5,7 @@ use env_logger::Env; // 引入 env_logger
 ref: https://actix.rs/docs/getting-started/
 curl http://127.0.0.1:9999/
 curl http://127.0.0.1:9999/hey
+curl http://127.0.0.1:9999/info/tester
 curl -X POST http://127.0.0.1:9999/echo -d 'Hello, Test Actix Web Post Request!'
 curl -X POST http://127.0.0.1:9999/echo -d "Hello, Test Actix Web Post Request\!"  Attention the testcase
 curl -X POST http://127.0.0.1:9999/echo -d "Hello, Test Actix Web Post Request."
@@ -22,11 +23,20 @@ async fn echo(req_body: String) -> impl Responder {
     HttpResponse::Ok().body(req_body)
 }
 
+// ref https://knots.l0u0l.com/Rust/%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/Actix%20Web.html
+#[get("/info/{name}")]
+async fn info(name: web::Path<String>) -> impl Responder {
+    format!("Hello, here is user {} basic info!", &name)
+}
+
+// curl http://127.0.0.1:9999/info/tester
+
 async fn manual_hello() -> impl Responder {
     println!("[D] Manual hello endpoint called"); // debug print
     HttpResponse::Ok().body("Hey there! It's working ...")
 }
 
+// 不使用路由宏的路由定义方法，手动注册 manual_hello
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // 初始化 env_logger，设置日志级别为 debug
@@ -48,7 +58,8 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::new("%a %{User-Agent}i %r %s %b")) // 自定义日志格式, it's better
             .service(hello)
             .service(echo)
-            // different way to register route that do not use a routing macro
+            .service(info)   // 注意要注册，否则路由不会生效
+            // different way to register route that do not use a routing macro，这个是手动注册方式
             .route("/hey", web::get().to(manual_hello))
     })
         // .bind(("127.0.0.1", 8080))?

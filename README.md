@@ -22,9 +22,14 @@ cargo check
 cargo run
 ```
 
+## RustRover IDE
+
+cargo check和 cargo run等命令都可以设置configuration，以便在IDE上快速调试。
+
 ## Todo
 
 - [Writing an Application](https://actix.rs/docs/application)
+- [Actix 实战快速入门 Rust](https://knots.l0u0l.com/Rust/%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/Actix%20Web.html)
 
 ## REF
 
